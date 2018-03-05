@@ -3,17 +3,14 @@
 		<title>Video Search</title>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script>
-		var data;
-		$.ajax({
-			url:"https://s3-ap-southeast-1.amazonaws.com/ysetter/media/video-search.json",
-			data:""
-		});
-		request.done(function(requestData){
-			data = requestData;
-		});
-		request.fail(function( jqXHR, textStatus ) {
-				alert( "Request failed: " + textStatus );
-		});
+		var data = 	{};
+		 
+		$.ajax({url: "https://s3-ap-southeast-1.amazonaws.com/ysetter/media/video-search.json", success: function(result){alert(result);
+	        data = result;
+	        showListVideo(search);
+	        var linkVideo = "https://www.youtube.com/embed/" + data.items[0].id.videoId;
+			$("#mainFrame").attr("src",linkVideo);
+		},dataType: "json",});
 		var search = "";
 		function showListVideo(search){
 			$("#listVideo").html("");
@@ -43,9 +40,8 @@
 				search = $(this).val();
 				showListVideo(search);
 			});
-			showListVideo(search);
-			var linkVideo = "https://www.youtube.com/embed/" + data.items[0].id.videoId;
-			$("#mainFrame").attr("src",linkVideo);
+			
+			
 			$("#listVideo").css("height",screen.height);
 		});
 		</script>
