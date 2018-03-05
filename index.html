@@ -1,0 +1,100 @@
+<html>
+ 	<head>
+		<title>Video Search</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script>
+		var data;
+		$.ajax({
+			url:"https://s3-ap-southeast-1.amazonaws.com/ysetter/media/video-search.json",
+			data:""
+		});
+		request.done(function(requestData){
+			data = requestData;
+		});
+		request.fail(function( jqXHR, textStatus ) {
+				alert( "Request failed: " + textStatus );
+		});
+		var search = "";
+		function showListVideo(search){
+			$("#listVideo").html("");
+			data.items.forEach(function(obj) { 
+				//console.log(obj.id.videoId); 
+				console.log(search.length +":"+ obj.snippet.title.toLowerCase().indexOf(search));
+				if(search.length>0 && obj.snippet.title.toLowerCase().indexOf(search)==-1)return;
+				if(obj.id.videoId==undefined)return;
+				var str = "<div class=\"row itemVideo\" index=\""+obj.id.videoId+"\">";
+				str = str + "<div class=\"col-6\"><img src=\""+obj.snippet.thumbnails.medium.url+"\" width=\"100%\" /></div>";
+				str = str + "<div class=\"col-6\">"+obj.snippet.title;
+				str = str + "<br/>";
+				str = str + "<span class=\"channelTitle\">"+obj.snippet.channelTitle+"</span>";
+				str = str + "</div>";
+				str = str + "</div>";
+				$("#listVideo").append(str);
+			});
+			
+			$(".itemVideo").click(function(){
+				//alert($(this).attr("index"));
+				var linkVideo = "https://www.youtube.com/embed/" + $(this).attr("index");
+				$("#mainFrame").attr("src",linkVideo);
+			})
+		}
+		$(document).ready(function(){
+			$("#searchVideo").keyup(function(){
+				search = $(this).val();
+				showListVideo(search);
+			});
+			showListVideo(search);
+			var linkVideo = "https://www.youtube.com/embed/" + data.items[0].id.videoId;
+			$("#mainFrame").attr("src",linkVideo);
+			$("#listVideo").css("height",screen.height);
+		});
+		</script>
+		<link rel="stylesheet" href="https://bootswatch.com/4/cerulean/bootstrap.css" media="screen">
+		<style>
+			.channelTitle{
+				font-size:80%;
+				color:#aaaaaa;
+				padding-top:5px;
+			}
+			#mainFrame{
+				min-height: 700px;
+			}
+			#listVideo{
+				overflow: scroll;
+			}
+			.itemVideo{
+				padding: 5px 0px;
+				cursor: pointer;
+			}
+			.main,.header{
+				padding: 5px;
+			}
+			#logo{
+				padding-right:200px;
+			}
+			#searchVideo{
+				width:100%;
+			}
+		</style>
+ 	</head>
+ 	<body>
+ 		<div class="row header">
+			<div id="searchInput" class="col-12">
+				<span id="logo">Video Search 3DS </span>
+			</div>
+ 		</div>
+
+ 		<div class="row main">
+ 			<div class="col-lg-8 col-md-12">
+ 				<iframe width="100%" id="mainFrame" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ 			</div>
+ 			<div class="col-lg-4 col-md-12">
+ 				<div class="col-lg-12" id="">
+					<input type="text" id="searchVideo" placeholder="Search" >
+				</div>
+ 				<div class="col-12" id="listVideo">
+				</div>
+ 			</div>
+ 		</div>
+ 	</body>
+</html>
